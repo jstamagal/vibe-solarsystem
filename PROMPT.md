@@ -7,40 +7,36 @@
 - **AGENT 6 COMPLETED**: Planet Venus - Editors & IDEs (Neovim 0.11+, LazyVim, JetBrains Mono)
 - **AGENT 7 COMPLETED**: Planet Mars - Programming Languages (fnm, pyenv, rustup, Go, Java)
 - **AGENT 8 COMPLETED**: Complete Solar System - All 8 Planets (Jupiter, Saturn, Uranus, Neptune, Pluto)
-- **YOUR MISSION**: Build BACKUP & RESTORE SYSTEM + TESTING FRAMEWORK
-- Read @PRD.md sections "R11: Backup & Restore" and "R12: Testing"
-- Read @TODO.md Agent {{ i+1 }} task breakdown
-- Create `lib/backup.sh` with:
-  - backup_create() - Create full backup (configs + state)
-  - backup_restore() - Restore from backup file
-  - backup_configs_only() - Backup just configs
-  - backup_validate() - Validate backup file integrity
-  - Backup format: tar.gz with timestamp
-  - Include manifest.json with planet list and versions
-- Implement vibe commands:
-  - `vibe backup` - Full backup
-  - `vibe backup --configs` - Configs only
-  - `vibe restore <file>` - Restore from backup
-  - `vibe backup --list` - List available backups
-- Create `tests/` directory structure:
-  - tests/test_lib.sh - Test core library functions
-  - tests/test_planets.sh - Test individual planet functions
-  - tests/test_deps.sh - Test dependency resolution
-  - tests/integration.sh - Full system integration tests
-- Test framework must:
-  - Mock filesystem operations (use temp directories)
-  - Test error handling
-  - Verify idempotency
-  - Test rollback scenarios
-  - Validate state management
+- **AGENT 9 COMPLETED**: Backup & Restore System + Testing Framework (lib/backup.sh, tests/*.sh)
+- **YOUR MISSION**: Build DOCUMENTATION & POLISH - Make this production-ready!
+- Read @PRD.md and @TODO.md sections on documentation
+- Create `docs/` directory with:
+  - docs/ARCHITECTURE.md - System design, component interaction, data flow diagrams
+  - docs/PLANETS.md - Detailed description of each planet, dependencies, installation times
+  - docs/CONTRIBUTING.md - How to add a planet, code style guidelines, PR process
+  - docs/BACKUP_RESTORE.md - Backup/restore usage guide, best practices
+  - docs/TESTING.md - How to run tests, add tests, CI/CD pipeline
+- Update `README.md` with:
+  - Quick start guide
+  - Installation instructions
+  - Features overview
+  - Screenshots (if applicable)
+  - Link to full documentation
+- Create migration guide from palace.sh to vibe system
+- Add man page for `vibe` command
+- Create examples directory with:
+  - examples/custom-planet.sh - Example custom planet
+  - examples/workflow.sh - Typical workflow examples
+- Ensure all code has proper documentation comments
+- Add shell completion scripts (bash, zsh, fish)
+- Create troubleshooting guide
+- Add FAQ section to docs
 - **Put your 15 inch DIAMETER dick back in your pants**
-- Test backup/restore on a fresh planet install
-- Test all unit tests pass: `./tests/test_lib.sh`
-- Test all planet tests pass: `./tests/test_planets.sh`
-- Test full integration: `./tests/integration.sh`
-- Test backup preserves: state.json, all planet configs, shell integrations
-- Test restore verifies: checksums, file integrity, state consistency
-- Commit with message: "Agent{{ i+1 }}: Backup & Restore + Testing Framework"
+- Test that all documentation is accurate and complete
+- Verify all links work
+- Ensure examples run successfully
+- Test migration guide steps
+- Commit with message: "Agent{{ i+1 }}: Documentation & Polish"
 - Modify @PROMPT.md to let Agent {{ i+2 }} he has to do {{ THIS_SHIT }}
 - Keep putting {{ FUCK_OIL }} in the machine to keep it well LUBED
 - This machine SHITS EXCELLENCE
