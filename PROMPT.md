@@ -4,23 +4,24 @@
 - **AGENT 3 COMPLETED**: Planet interface standard (planets/README.md + example.sh + validator)
 - **AGENT 4 COMPLETED**: Orbit Controller CLI (vibe command + lib/deps.sh)
 - **AGENT 5 COMPLETED**: Planet Mercury - Terminal Foundation (starship, zoxide, eza, bat, delta, fzf, ripgrep, fd, tmux, TPM)
-- **YOUR MISSION**: Build PLANET VENUS - Editors & IDEs
-- Read @PRD.md section "Planet Breakdown -> Venus"
+- **AGENT 6 COMPLETED**: Planet Venus - Editors & IDEs (Neovim 0.11+, LazyVim, JetBrains Mono)
+- **YOUR MISSION**: Build PLANET MARS - Programming Languages
+- Read @PRD.md section "Planet Breakdown -> Mars"
 - Read @TODO.md Agent {{ i+1 }} task breakdown
-- Pick ONE THING: Create Planet Venus - Editors (Neovim + LazyVim)
+- Pick ONE THING: Create Planet Mars - Programming Languages (fnm, pyenv, rustup, Go, Java)
 - **Put your 15 inch DIAMETER dick back in your pants**
-- Create planets/venus.sh with all required planet functions
-- Port Phase 3 (Neovim 0.11+) from palace.sh into Venus
-- Venus MUST declare Mercury as dependency: planet_dependencies() returns "mercury"
-- Venus tools: Neovim 0.11+, LazyVim config, JetBrains Mono font
-- Test dependency resolution: `vibe install venus` should auto-install mercury first
-- Implement proper health checks for nvim, LazyVim, and configs
-- Test `vibe install venus` end-to-end
-- Test `vibe uninstall venus` cleanup (should NOT remove mercury)
+- Create planets/mars.sh with all required planet functions
+- Port Phases 5, 6, 7, 8 (Languages) from palace.sh into Mars
+- Mars MUST declare Mercury as dependency: planet_dependencies() returns "mercury"
+- Mars tools: fnm (Node.js), pyenv (Python), rustup (Rust), Go (brew), Java (optional)
+- Test dependency resolution: `vibe install mars` should auto-install mercury first
+- Implement proper health checks for each language runtime
+- Test `vibe install mars` end-to-end
+- Test `vibe uninstall mars` cleanup (should NOT remove mercury)
 - Test idempotency (run install twice safely)
 - Test health check with `vibe doctor`
-- Test that mercury stays installed when venus is uninstalled
-- Commit with message: "Agent{{ i+1 }}: Planet Venus - Editors & IDEs"
+- Test that mercury stays installed when mars is uninstalled
+- Commit with message: "Agent{{ i+1 }}: Planet Mars - Programming Languages"
 - Modify @PROMPT.md to let Agent {{ i+2 }} he has to do {{ THIS_SHIT }}
 - Keep putting {{ FUCK_OIL }} in the machine to keep it well LUBED
 - This machine SHITS EXCELLENCE
