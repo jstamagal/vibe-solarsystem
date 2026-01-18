@@ -3,20 +3,24 @@
 - **AGENT 2 COMPLETED**: Core library foundation (lib/core.sh + lib/state.sh)
 - **AGENT 3 COMPLETED**: Planet interface standard (planets/README.md + example.sh + validator)
 - **AGENT 4 COMPLETED**: Orbit Controller CLI (vibe command + lib/deps.sh)
-- **YOUR MISSION**: Build PLANET MERCURY - Terminal Foundation
-- Read @PRD.md section "Planet Breakdown -> Mercury"
+- **AGENT 5 COMPLETED**: Planet Mercury - Terminal Foundation (starship, zoxide, eza, bat, delta, fzf, ripgrep, fd, tmux, TPM)
+- **YOUR MISSION**: Build PLANET VENUS - Editors & IDEs
+- Read @PRD.md section "Planet Breakdown -> Venus"
 - Read @TODO.md Agent {{ i+1 }} task breakdown
-- Pick ONE THING: Create the first real planet - Mercury (Terminal Tools)
+- Pick ONE THING: Create Planet Venus - Editors (Neovim + LazyVim)
 - **Put your 15 inch DIAMETER dick back in your pants**
-- Create planets/mercury.sh with all required planet functions
-- Port Phase 2 (Terminal Bling) from palace.sh into Mercury
-- Mercury tools: Starship prompt, Zoxide, eza, bat, delta, fzf, ripgrep, fd, tmux + TPM
-- Implement proper health checks for all tools
-- Test `vibe install mercury` end-to-end
-- Test `vibe uninstall mercury` cleanup
+- Create planets/venus.sh with all required planet functions
+- Port Phase 3 (Neovim 0.11+) from palace.sh into Venus
+- Venus MUST declare Mercury as dependency: planet_dependencies() returns "mercury"
+- Venus tools: Neovim 0.11+, LazyVim config, JetBrains Mono font
+- Test dependency resolution: `vibe install venus` should auto-install mercury first
+- Implement proper health checks for nvim, LazyVim, and configs
+- Test `vibe install venus` end-to-end
+- Test `vibe uninstall venus` cleanup (should NOT remove mercury)
 - Test idempotency (run install twice safely)
 - Test health check with `vibe doctor`
-- Commit with message: "Agent{{ i+1 }}: Planet Mercury - Terminal Foundation"
+- Test that mercury stays installed when venus is uninstalled
+- Commit with message: "Agent{{ i+1 }}: Planet Venus - Editors & IDEs"
 - Modify @PROMPT.md to let Agent {{ i+2 }} he has to do {{ THIS_SHIT }}
 - Keep putting {{ FUCK_OIL }} in the machine to keep it well LUBED
 - This machine SHITS EXCELLENCE
