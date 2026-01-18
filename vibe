@@ -19,6 +19,7 @@ SCRIPT_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
 source "$SCRIPT_DIR/lib/core.sh"
 source "$SCRIPT_DIR/lib/state.sh"
 source "$SCRIPT_DIR/lib/deps.sh"
+source "$SCRIPT_DIR/lib/backup.sh"
 
 # Explicitly set planets directory
 export PLANETS_DIR="$SCRIPT_DIR/planets"
@@ -78,6 +79,10 @@ COMMANDS:
     list                List all available planets
     tree <planet>       Show dependency tree for a planet
     graph               Show dependency graph for all planets
+    backup              Create a backup (configs + state)
+    backup --configs    Backup only configuration files
+    backup --list       List all available backups
+    restore <file>      Restore from a backup file
     help                Show this help message
 
 OPTIONS:
@@ -94,6 +99,10 @@ EXAMPLES:
     vibe doctor                       # Check system health
     vibe uninstall jupiter            # Remove database tools
     vibe tree saturn                  # Show Saturn's dependencies
+    vibe backup                       # Create full backup
+    vibe backup --configs             # Backup configs only
+    vibe restore vibe-backup-*.tar.gz # Restore from backup
+    vibe backup --list                # List available backups
 
 PLANETS:
     mercury    Terminal foundation (starship, eza, fzf, etc.)
@@ -579,6 +588,106 @@ cmd_graph() {
 }
 
 # ═══════════════════════════════════════════════════════════════════════════════
+# BACKUP & RESTORE COMMANDS
+# ═══════════════════════════════════════════════════════════════════════════════
+
+# cmd_backup: Create backup
+cmd_backup() {
+    local option="${1:-}"
+
+    case "$option" in
+        --configs)
+            banner "💾 Config Backup"
+            echo ""
+
+            log "Creating configuration-only backup..."
+            local backup_file
+            backup_file=$(backup_configs_only)
+
+            if [[ -n "$backup_file" ]]; then
+                success "Config backup complete!"
+                log "Backup saved to: $backup_file"
+            else
+                return 1
+            fi
+            ;;
+        --list)
+            backup_list
+            ;;
+        "")
+            banner "💾 Full Backup"
+            echo ""
+
+            log "Creating full backup (configs + state)..."
+            local backup_file
+            backup_file=$(backup_create)
+
+            if [[ -n "$backup_file" ]]; then
+                success "Backup complete!"
+                log "Backup saved to: $backup_file"
+            else
+                return 1
+            fi
+            ;;
+        *)
+            error "Unknown backup option: $option"
+            echo "Usage: vibe backup [--configs|--list]"
+            return 1
+            ;;
+    esac
+}
+
+# cmd_restore: Restore from backup
+cmd_restore() {
+    local backup_file="$1"
+
+    if [[ -z "$backup_file" ]]; then
+        error "Missing backup file"
+        echo "Usage: vibe restore <backup-file.tar.gz>"
+        echo "Run 'vibe backup --list' to see available backups"
+        return 1
+    fi
+
+    # Expand glob if needed
+    if [[ "$backup_file" == *"*" ]]; then
+        local expanded
+        expanded=$(ls $backup_file 2>/dev/null | head -n 1)
+
+        if [[ -z "$expanded" ]]; then
+            error "No backup files found matching: $backup_file"
+            return 1
+        fi
+
+        backup_file="$expanded"
+    fi
+
+    if [[ ! -f "$backup_file" ]]; then
+        error "Backup file not found: $backup_file"
+        return 1
+    fi
+
+    # Confirmation prompt
+    if [[ $YES -eq 0 ]]; then
+        warn "This will overwrite existing configuration files!"
+        if ! confirm_dangerous_operation "restore from $backup_file"; then
+            log "Restore cancelled"
+            return 0
+        fi
+    fi
+
+    banner "📥 Restore from Backup"
+    echo ""
+
+    if backup_restore "$backup_file"; then
+        success "Restore complete!"
+        return 0
+    else
+        error "Restore failed"
+        return 1
+    fi
+}
+
+# ═══════════════════════════════════════════════════════════════════════════════
 # ARGUMENT PARSING
 # ═══════════════════════════════════════════════════════════════════════════════
 
@@ -683,6 +792,17 @@ main() {
             ;;
         graph)
             cmd_graph
+            ;;
+        backup)
+            cmd_backup "${1:-}"
+            ;;
+        restore)
+            if [[ $# -eq 0 ]]; then
+                error "Missing backup file"
+                echo "Usage: vibe restore <backup-file.tar.gz>"
+                exit 1
+            fi
+            cmd_restore "$1"
             ;;
         help|--help|-h)
             show_help
