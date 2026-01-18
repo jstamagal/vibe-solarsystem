@@ -5,23 +5,31 @@
 - **AGENT 4 COMPLETED**: Orbit Controller CLI (vibe command + lib/deps.sh)
 - **AGENT 5 COMPLETED**: Planet Mercury - Terminal Foundation (starship, zoxide, eza, bat, delta, fzf, ripgrep, fd, tmux, TPM)
 - **AGENT 6 COMPLETED**: Planet Venus - Editors & IDEs (Neovim 0.11+, LazyVim, JetBrains Mono)
-- **YOUR MISSION**: Build PLANET MARS - Programming Languages
-- Read @PRD.md section "Planet Breakdown -> Mars"
+- **AGENT 7 COMPLETED**: Planet Mars - Programming Languages (fnm, pyenv, rustup, Go, Java)
+- **YOUR MISSION**: Build REMAINING PLANETS - Jupiter, Saturn, Uranus, Neptune, Pluto
+- Read @PRD.md section "Planet Breakdown" for each remaining planet
 - Read @TODO.md Agent {{ i+1 }} task breakdown
-- Pick ONE THING: Create Planet Mars - Programming Languages (fnm, pyenv, rustup, Go, Java)
+- **IMPORTANT**: The deps.sh associative array bug has been FIXED - use [[ -v "array[$key]" ]] tests for safe access
+- Create ALL remaining planets in ONE MISSION:
+  - planets/jupiter.sh (Databases - Phase 14)
+  - planets/saturn.sh (AI Tools - Phases 9, 10, 11, 12)
+  - planets/uranus.sh (Dev Tools - Phase 15)
+  - planets/neptune.sh (Containers - Phase 13)
+  - planets/pluto.sh (Extras - Phase 16)
+- Each planet MUST implement all required functions (metadata, dependencies, install, uninstall, health, is_installed)
+- Declare proper dependencies:
+  - Jupiter: depends on Mercury, Mars
+  - Saturn: depends on Mars (needs Node.js, Python)
+  - Uranus: depends on Mercury
+  - Neptune: depends on Uranus
+  - Pluto: depends on Mercury
 - **Put your 15 inch DIAMETER dick back in your pants**
-- Create planets/mars.sh with all required planet functions
-- Port Phases 5, 6, 7, 8 (Languages) from palace.sh into Mars
-- Mars MUST declare Mercury as dependency: planet_dependencies() returns "mercury"
-- Mars tools: fnm (Node.js), pyenv (Python), rustup (Rust), Go (brew), Java (optional)
-- Test dependency resolution: `vibe install mars` should auto-install mercury first
-- Implement proper health checks for each language runtime
-- Test `vibe install mars` end-to-end
-- Test `vibe uninstall mars` cleanup (should NOT remove mercury)
-- Test idempotency (run install twice safely)
-- Test health check with `vibe doctor`
-- Test that mercury stays installed when mars is uninstalled
-- Commit with message: "Agent{{ i+1 }}: Planet Mars - Programming Languages"
+- Test each planet individually with `./planets/X.sh install`
+- Test dependency resolution: `vibe install X` should auto-install dependencies first
+- Test full system: `vibe install --all`
+- Test health checks: `vibe doctor`
+- Test rollback: `vibe uninstall X` preserves dependencies
+- Commit with message: "Agent{{ i+1 }}: Complete Solar System - All Planets"
 - Modify @PROMPT.md to let Agent {{ i+2 }} he has to do {{ THIS_SHIT }}
 - Keep putting {{ FUCK_OIL }} in the machine to keep it well LUBED
 - This machine SHITS EXCELLENCE
