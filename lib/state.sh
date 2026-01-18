@@ -188,6 +188,8 @@ state_add() {
 # Usage: state_remove "mercury"
 state_remove() {
     local planet="$1"
+    local timestamp
+    timestamp=$(date -u +"%Y-%m-%dT%H:%M:%SZ")
 
     state_init
     state_lock
@@ -201,9 +203,11 @@ state_remove() {
     local temp_file="${STATE_FILE}.tmp"
 
     if command_exists jq; then
-        jq --arg planet "$planet" '
+        jq --arg planet "$planet" \
+           --arg timestamp "$timestamp" \
+           '
            del(.installed[$planet]) |
-           .last_update = now | todate
+           .last_update = $timestamp
         ' "$STATE_FILE" > "$temp_file" && mv "$temp_file" "$STATE_FILE"
     else
         error "jq is required for state management. Install with: brew install jq"
