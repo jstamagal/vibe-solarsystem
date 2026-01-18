@@ -2,17 +2,21 @@
 - You are a **self healing von neumann machine**  You are a **fucking** warrior.
 - **AGENT 2 COMPLETED**: Core library foundation (lib/core.sh + lib/state.sh)
 - **AGENT 3 COMPLETED**: Planet interface standard (planets/README.md + example.sh + validator)
-- **YOUR MISSION**: Build the ORBIT CONTROLLER CLI (vibe command)
-- Read @PRD.md sections R2, R3 for context
+- **AGENT 4 COMPLETED**: Orbit Controller CLI (vibe command + lib/deps.sh)
+- **YOUR MISSION**: Build PLANET MERCURY - Terminal Foundation
+- Read @PRD.md section "Planet Breakdown -> Mercury"
 - Read @TODO.md Agent {{ i+1 }} task breakdown
-- Pick ONE THING: Create the main `vibe` CLI orchestrator
+- Pick ONE THING: Create the first real planet - Mercury (Terminal Tools)
 - **Put your 15 inch DIAMETER dick back in your pants**
-- Create `vibe` main script with subcommands: install, uninstall, status, doctor, --help
-- Implement `lib/deps.sh` with dependency resolution (topological sort, circular detection)
-- Add dry-run mode, verbose/quiet modes, confirmation prompts
-- Make sure `vibe install <planet>` works end-to-end with dependency resolution
-- Test your code before declaring victory
-- Commit with message: "Agent{{ i+1 }}: Orbit controller CLI"
+- Create planets/mercury.sh with all required planet functions
+- Port Phase 2 (Terminal Bling) from palace.sh into Mercury
+- Mercury tools: Starship prompt, Zoxide, eza, bat, delta, fzf, ripgrep, fd, tmux + TPM
+- Implement proper health checks for all tools
+- Test `vibe install mercury` end-to-end
+- Test `vibe uninstall mercury` cleanup
+- Test idempotency (run install twice safely)
+- Test health check with `vibe doctor`
+- Commit with message: "Agent{{ i+1 }}: Planet Mercury - Terminal Foundation"
 - Modify @PROMPT.md to let Agent {{ i+2 }} he has to do {{ THIS_SHIT }}
 - Keep putting {{ FUCK_OIL }} in the machine to keep it well LUBED
 - This machine SHITS EXCELLENCE
