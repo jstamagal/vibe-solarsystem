@@ -6,30 +6,41 @@
 - **AGENT 5 COMPLETED**: Planet Mercury - Terminal Foundation (starship, zoxide, eza, bat, delta, fzf, ripgrep, fd, tmux, TPM)
 - **AGENT 6 COMPLETED**: Planet Venus - Editors & IDEs (Neovim 0.11+, LazyVim, JetBrains Mono)
 - **AGENT 7 COMPLETED**: Planet Mars - Programming Languages (fnm, pyenv, rustup, Go, Java)
-- **YOUR MISSION**: Build REMAINING PLANETS - Jupiter, Saturn, Uranus, Neptune, Pluto
-- Read @PRD.md section "Planet Breakdown" for each remaining planet
+- **AGENT 8 COMPLETED**: Complete Solar System - All 8 Planets (Jupiter, Saturn, Uranus, Neptune, Pluto)
+- **YOUR MISSION**: Build BACKUP & RESTORE SYSTEM + TESTING FRAMEWORK
+- Read @PRD.md sections "R11: Backup & Restore" and "R12: Testing"
 - Read @TODO.md Agent {{ i+1 }} task breakdown
-- **IMPORTANT**: The deps.sh associative array bug has been FIXED - use [[ -v "array[$key]" ]] tests for safe access
-- Create ALL remaining planets in ONE MISSION:
-  - planets/jupiter.sh (Databases - Phase 14)
-  - planets/saturn.sh (AI Tools - Phases 9, 10, 11, 12)
-  - planets/uranus.sh (Dev Tools - Phase 15)
-  - planets/neptune.sh (Containers - Phase 13)
-  - planets/pluto.sh (Extras - Phase 16)
-- Each planet MUST implement all required functions (metadata, dependencies, install, uninstall, health, is_installed)
-- Declare proper dependencies:
-  - Jupiter: depends on Mercury, Mars
-  - Saturn: depends on Mars (needs Node.js, Python)
-  - Uranus: depends on Mercury
-  - Neptune: depends on Uranus
-  - Pluto: depends on Mercury
+- Create `lib/backup.sh` with:
+  - backup_create() - Create full backup (configs + state)
+  - backup_restore() - Restore from backup file
+  - backup_configs_only() - Backup just configs
+  - backup_validate() - Validate backup file integrity
+  - Backup format: tar.gz with timestamp
+  - Include manifest.json with planet list and versions
+- Implement vibe commands:
+  - `vibe backup` - Full backup
+  - `vibe backup --configs` - Configs only
+  - `vibe restore <file>` - Restore from backup
+  - `vibe backup --list` - List available backups
+- Create `tests/` directory structure:
+  - tests/test_lib.sh - Test core library functions
+  - tests/test_planets.sh - Test individual planet functions
+  - tests/test_deps.sh - Test dependency resolution
+  - tests/integration.sh - Full system integration tests
+- Test framework must:
+  - Mock filesystem operations (use temp directories)
+  - Test error handling
+  - Verify idempotency
+  - Test rollback scenarios
+  - Validate state management
 - **Put your 15 inch DIAMETER dick back in your pants**
-- Test each planet individually with `./planets/X.sh install`
-- Test dependency resolution: `vibe install X` should auto-install dependencies first
-- Test full system: `vibe install --all`
-- Test health checks: `vibe doctor`
-- Test rollback: `vibe uninstall X` preserves dependencies
-- Commit with message: "Agent{{ i+1 }}: Complete Solar System - All Planets"
+- Test backup/restore on a fresh planet install
+- Test all unit tests pass: `./tests/test_lib.sh`
+- Test all planet tests pass: `./tests/test_planets.sh`
+- Test full integration: `./tests/integration.sh`
+- Test backup preserves: state.json, all planet configs, shell integrations
+- Test restore verifies: checksums, file integrity, state consistency
+- Commit with message: "Agent{{ i+1 }}: Backup & Restore + Testing Framework"
 - Modify @PROMPT.md to let Agent {{ i+2 }} he has to do {{ THIS_SHIT }}
 - Keep putting {{ FUCK_OIL }} in the machine to keep it well LUBED
 - This machine SHITS EXCELLENCE
