@@ -14,6 +14,11 @@ if [[ -z "${VIBE_DIR:-}" ]]; then
     source "$SCRIPT_DIR/core.sh"
 fi
 
+# Declare global associative arrays for topological sort
+# These are used by deps_sort_topological and __deps_calculate_depth
+declare -gA __deps_depth=()
+declare -gA __deps_in_progress=()
+
 # Directory where planet scripts are located
 # Default to relative path if not set
 if [[ -z "${PLANETS_DIR:-}" ]]; then
@@ -85,8 +90,11 @@ deps_get() {
         deps=$(planet_dependencies 2>/dev/null || echo "")
 
         # If dependencies returned as space-separated, convert to one per line
+        # Trim whitespace and check if non-empty
+        deps=$(echo "$deps" | tr ' ' '\n' | grep -v '^$' | sort -u || true)
+
         if [[ -n "$deps" ]]; then
-            echo "$deps" | tr ' ' '\n' | grep -v '^$' | sort -u
+            echo "$deps"
         fi
     else
         error "Failed to source planet: $planet"
@@ -204,6 +212,78 @@ deps_check_circular() {
 # TOPOLOGICAL SORT (INSTALLATION ORDER)
 # ═══════════════════════════════════════════════════════════════════════════════
 
+# Helper function for topological sort (defined outside to avoid scoping issues)
+# Uses global variables __deps_depth and __deps_in_progress
+__deps_calculate_depth() {
+    local current="$1"
+
+    # Ensure arrays are associative ( sourcing planet scripts might mess this up )
+    if ! declare -p __deps_depth 2>/dev/null | grep -q associative; then
+        declare -gA __deps_depth=()
+    fi
+    if ! declare -p __deps_in_progress 2>/dev/null | grep -q associative; then
+        declare -gA __deps_in_progress=()
+    fi
+
+    # If already calculated, return (use eval for safety)
+    local current_depth
+    eval "current_depth=\"\${__deps_depth[$current]:-}\""
+    if [[ -n "$current_depth" ]]; then
+        return 0
+    fi
+
+    # If we're in progress, we have a cycle (shouldn't happen due to check above)
+    local current_progress
+    eval "current_progress=\"\${__deps_in_progress[$current]:-}\""
+    if [[ -n "$current_progress" ]]; then
+        error "Cycle detected during topological sort: $current"
+        return 1
+    fi
+
+    # Mark as in progress (use eval for safety)
+    eval "__deps_in_progress[\"\$current\"]=1"
+
+    # Get dependencies
+    local deps
+    deps=$(deps_get "$current" 2>/dev/null || echo "")
+
+    local max_dep_depth=0
+    while IFS= read -r dep; do
+        # Skip empty lines and ensure dep is a valid planet name
+        if [[ -n "$dep" ]] && [[ "$dep" =~ ^[a-z]+$ ]]; then
+            # Recursively calculate depth
+            __deps_calculate_depth "$dep"
+
+            # Re-check arrays after recursive call ( sourcing might have messed them up )
+            if ! declare -p __deps_depth 2>/dev/null | grep -q associative; then
+                declare -gA __deps_depth=()
+            fi
+
+            # Use indirect reference with -v test to safely access the array
+            local dep_depth=0
+            if [[ -v "__deps_depth[$dep]" ]]; then
+                dep_depth="${__deps_depth[$dep]}"
+            fi
+            if [[ $dep_depth -gt $max_dep_depth ]]; then
+                max_dep_depth=$dep_depth
+            fi
+        fi
+    done <<< "$deps"
+
+    # Re-check before assignment
+    if ! declare -p __deps_depth 2>/dev/null | grep -q associative; then
+        declare -gA __deps_depth=()
+    fi
+
+    # Depth is max dependency depth + 1 (use eval for safety)
+    eval "__deps_depth[\"\$current\"]=$((max_dep_depth + 1))"
+
+    # Mark as no longer in progress
+    unset __deps_in_progress["$current"]
+
+    return 0
+}
+
 # deps_sort_topological: Calculate installation order using topological sort
 # Returns: List of planet names in installation order (one per line)
 # Usage: deps_sort_topological "venus"
@@ -219,59 +299,15 @@ deps_sort_topological() {
     local all_deps
     all_deps=$(deps_get_all_recursive "$planet")
 
-    # Calculate depth for each planet (distance from leaf nodes)
-    declare -A depth
-    declare -A in_progress
-
-    # Function to calculate depth
-    __calculate_depth() {
-        local current="$1"
-
-        # If already calculated, return
-        if [[ -n "${depth[$current]:-}" ]]; then
-            return 0
-        fi
-
-        # If we're in progress, we have a cycle (shouldn't happen due to check above)
-        if [[ -n "${in_progress[$current]:-}" ]]; then
-            error "Cycle detected during topological sort: $current"
-            return 1
-        fi
-
-        in_progress["$current"]=1
-
-        # Get dependencies
-        local deps
-        deps=$(deps_get "$current" 2>/dev/null || echo "")
-
-        local max_dep_depth=0
-        while IFS= read -r dep; do
-            if [[ -n "$dep" ]]; then
-                # Recursively calculate depth
-                __calculate_depth "$dep"
-
-                local dep_depth="${depth[$dep]:-0}"
-                if [[ $dep_depth -gt $max_dep_depth ]]; then
-                    max_dep_depth=$dep_depth
-                fi
-            fi
-        done <<< "$deps"
-
-        # Depth is max dependency depth + 1
-        depth["$current"]=$((max_dep_depth + 1))
-
-        # Mark as no longer in progress
-        unset in_progress["$current"]
-
-        return 0
-    }
+    # Note: We use the global __deps_depth and __deps_in_progress arrays
+    # They accumulate data across calls, but that's OK since we overwrite values
 
     # Calculate depth for target and all its dependencies
-    __calculate_depth "$planet"
+    __deps_calculate_depth "$planet"
 
     while IFS= read -r dep; do
-        if [[ -n "$dep" ]]; then
-            __calculate_depth "$dep"
+        if [[ -n "$dep" ]] && [[ "$dep" =~ [a-zA-Z] ]]; then
+            __deps_calculate_depth "$dep"
         fi
     done <<< "$all_deps"
 
@@ -283,7 +319,10 @@ deps_sort_topological() {
         echo "$planet"
     } | while IFS= read -r p; do
         if [[ -n "$p" ]]; then
-            echo "${depth[$p]:-0} $p"
+            # Use eval for safe array access
+            local depth_val
+            eval "depth_val=\"\${__deps_depth[$p]:-0}\""
+            echo "$depth_val $p"
         fi
     done | sort -n -k1 | awk '{print $2}'
 }
